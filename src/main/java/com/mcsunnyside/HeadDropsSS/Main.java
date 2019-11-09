@@ -50,7 +50,7 @@ public class Main extends JavaPlugin implements Listener {
                     PlayerProfile playerProfile = skull.getPlayerProfile();
                     if(!playerProfile.hasTextures()){
                         itemFrame.setItem(new ItemStack(Material.AIR));
-                        getLogger().info("移除了位于 "+itemFrame.getLocation()+" 展示框内的可能导致潜在卡顿的玩家头颅");
+                        getLogger().info("Removed skull at "+itemFrame.getLocation()+" in the ItemFrame cause this skull will client laggy");
                     }
                 }
             }
@@ -65,7 +65,7 @@ public class Main extends JavaPlugin implements Listener {
                 PlayerProfile playerProfile = skull.getPlayerProfile();
                 if(!playerProfile.hasTextures()){
                     skull.getBlock().setType(Material.AIR);
-                    getLogger().info("移除了位于 "+skull.getLocation()+" 的可能导致潜在卡顿的玩家头颅");
+                    getLogger().info("Removed skull at "+skull.getLocation()+" cause this skull will client laggy");
                 }
             }
         }
@@ -78,7 +78,7 @@ public class Main extends JavaPlugin implements Listener {
         }
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         if(!e.getEntity().getPlayerProfile().hasTextures()){
-            getLogger().info("取消为玩家 "+e.getEntity().getName()+" 的头颅掉落，此玩家没有皮肤");
+            getLogger().info("Cancel drop skull for player "+e.getEntity().getName()+" cause this player no skin");
             return;
         }
         ItemMeta meta = head.getItemMeta();
