@@ -1,0 +1,38 @@
+language: java
+jdk:
+- openjdk8
+install: false
+script:
+- git clone https://$Github_token@github.com/Ghost-chu/HeadDropsSS.git
+- cd HeadDropsSS
+- mvn clean
+- mvn -T 4 install
+after_success:
+- rm -rf push
+- mkdir push
+- cp ./target/*.jar ./push/
+- git clone https://$Github_token@github.com/Ghost-chu/BinaryRepository.git
+- mkdir -p ./BinaryRepository/HeadDropsSS/$TRAVIS_BUILD_NUMBER
+- mkdir -p ./BinaryRepository/HeadDropsSS/$TRAVIS_BUILD_NUMBER/target
+- cp ./target/* ./BinaryRepository/HeadDropsSS/$TRAVIS_BUILD_NUMBER/target
+- echo -e "== Built by Travis-CI ==\nBuild Number [$TRAVIS_BUILD_NUMBER]\nBuild Type
+  [$TRAVIS_EVENT_TYPE]\nTag [$TRAVIS_TAG]\nCommit [$TRAVIS_COMMIT] - [$TRAVIS_COMMIT_MESSAGE]"
+  > ./BinaryRepository/HeadDropsSS/$TRAVIS_BUILD_NUMBER/BUILDINFO
+- cd BinaryRepository
+- git add .
+- git commit -m "Auto update by Bot"
+- git push --force
+- cd ..
+- echo "done"
+deploy:
+  skip_cleanup: true
+  provider: releases
+  api_key:
+    secure: cPHURAaS9nIYs8w6nm8ffgd3U9MUxICMbJTJzICPu5tGKupQmbsDs14ztOETfWLIhgywjU/CYGpIhfyAWiLd4UyQUnFwdbPlRQ9ngy7/118NZIjubT42udutoQErm2qMJDJNr6dx4sKyLM0c2B4Opz8dR3DTQXPQRVwUaujWvepGySBOiXdGeY4mGIiJQTgWKnnkzs6Lyh7SKkgJ5ivXfX0Xqr1PsCsO2AlGmZ7j3Re9ronDEuSA/Oion26scfrrt3PPsYMNGtq9qQ8KkkVJ5WBH9Ui1KBhN5k+rFGH8fGvrXbtbLHlnmwPCOa2RFA2lpz/Jd3VQuIJa6YL+OxFpVzhZcVBSIKL37mbGE/+hzz4p7GC2MAmIbSIYgzE/8fHDie0MtJM4MnKTlVBGSk1YDCqNHZ+ZMAi3IyHRoOYFHLEnOFT1ELM/HfZxA1LYWgXZ1QJlEbJbxxr6/dUIqYm2G7bLi2KLGb8NSjMzUYZjPVbuZCXRoESTnKpEPpVoS57BSjSGazdEl7lNUVTLp73e03+rkepMt5cTq8tDfwvU4GaQ8W66SVcbnIldc/DYASv0PYfjLkwgqKHF75mH6WPqlPPouieYPYPJykuAihzsi5MPQRXleFEWkzUJyih0G1gkFGn0IK4bKVd9UKwos3LT6/Uiuu4JlenD95hNJgZgrss=
+  file:
+    - ./push/*
+  file_glob: true
+  on:
+    repo: Ghost-chu/HeadDropsSS
+    tags: true
+  overwrite: true

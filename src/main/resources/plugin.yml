@@ -1,0 +1,8 @@
+name: HeadDropsSS
+main: com.mcsunnyside.HeadDropsSS.Main
+version: 1.0
+api-version: 1.14
+commands:
+  hdss:
+    description: Nothing
+    usage: nope
