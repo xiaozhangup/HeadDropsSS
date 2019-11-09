@@ -24,6 +24,7 @@ public class Main extends JavaPlugin implements Listener {
     private boolean scanItemFrame = false;
     @Override
     public void onEnable() {
+        saveDefaultConfig();
         this.dropSkull = getConfig().getBoolean("drop-skull");
         this.scanItemFrame = getConfig().getBoolean("scan-itemframe");
         Bukkit.getPluginManager().registerEvents(this, this);
