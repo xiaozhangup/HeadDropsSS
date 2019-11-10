@@ -3,6 +3,7 @@ jdk:
 - openjdk8
 install: false
 script:
+  - export PROJECT_NAME=HeadDropSS
 - git clone https://$Github_token@github.com/Ghost-chu/HeadDropsSS.git
 - cd HeadDropsSS
 - mvn clean
@@ -12,12 +13,12 @@ after_success:
 - mkdir push
 - cp ./target/*.jar ./push/
 - git clone https://$Github_token@github.com/Ghost-chu/BinaryRepository.git
-- mkdir -p ./BinaryRepository/HeadDropsSS/$TRAVIS_BUILD_NUMBER
-- mkdir -p ./BinaryRepository/HeadDropsSS/$TRAVIS_BUILD_NUMBER/target
-- cp ./target/* ./BinaryRepository/HeadDropsSS/$TRAVIS_BUILD_NUMBER/target
+- mkdir -p ./BinaryRepository/$PROJECT_NAME/$TRAVIS_BUILD_NUMBER
+- mkdir -p ./BinaryRepository/$PROJECT_NAME/$TRAVIS_BUILD_NUMBER/target
+- cp ./target/* ./BinaryRepository/$PROJECT_NAME/$TRAVIS_BUILD_NUMBER/target
 - echo -e "== Built by Travis-CI ==\nBuild Number [$TRAVIS_BUILD_NUMBER]\nBuild Type
   [$TRAVIS_EVENT_TYPE]\nTag [$TRAVIS_TAG]\nCommit [$TRAVIS_COMMIT] - [$TRAVIS_COMMIT_MESSAGE]"
-  > ./BinaryRepository/HeadDropsSS/$TRAVIS_BUILD_NUMBER/BUILDINFO
+  > ./BinaryRepository/$PROJECT_NAME/$TRAVIS_BUILD_NUMBER/BUILDINFO
 - cd BinaryRepository
 - git add .
 - git commit -m "Auto update by Bot"
@@ -28,11 +29,11 @@ deploy:
   skip_cleanup: true
   provider: releases
   api_key:
-    secure: cMwED+rBh7db0dVMNmQ3mp6gcEHeoVrU2bjsLoAVizFjJmnsKOrExzDVXUqlSEuks15YrrH+9wniyOE27zfSmUGKF2XSCL8Zo0olHK+E9BZU+VhcgTejQgduS3aRuO2q7aLNzZqrCaw0BswWCdMvdudmlBnHM8jsRM24QYFowHQEFkoq1+KecreAhR9F+XlKBo3diZPjqkiohlwcyt9UBPBjo8+sgUbVXaaEhjbPVVsue9a5TT98e/2UwBLso2APjuqFoKXIWC6rYNW91OOBGltxMxhQa4ev3xqbvE3ou+GqfWH1JTIueiDrOR4t6MwMlFwt/W+NfqekXkRc8vqYmRGadK7JcKcZfbJBsjF0QTxXGU/IaZgFi00Vz63xeLNvyYrIEjCp0zCq0Ai0aUFfHjqguJvyiBaPWTi1hoGCd76Wa7RF65ZuZyTrXIguFQHdV2ATIPluUy3Sz2sXRbyLmwq6b7QEOR7TSeGjQsqzla/eTeUCcx48fgJQ3KsXgSe9B2rqB3ryL8uzm1qxdUrpN800ydJzOEBl7h10FQ5eMmVzeWbS+mT9QReU3B/ZXIeC8Av6WBcZ5cMt2iomQ0V0EuXZETd6EtifMv+DVuswxVfk0EgzXGSEA7HStqbxYwdGFAoRuvpdGP7sdaeyiwXD+sQ91L/wjlEGF2JMeVHCjLw=
+    secure: JdGOiwdp/54adBld74t6deUvV/dLizqcso+4FkJcbf2gmbcQ0iuNTInv+w2CXYLRLOnNpNm48kQPdjUp7xkhut2HOFZZ0WYKRawc5rDyrFxcjKJ4R9Y+UXCzybbFVWcgSF5gtre15L+1xHnBhu9U0NSUq0r30r4tdT8EHOUdxziM2MBiqXdiRHx/c8yR7q9/iLJlNcPJ9pGzEaFYpdLHmo6nv0F6kgyHflxf6HlZJILvud1dY9Yp8tdJ5V/ECjVwz/GiuJhDBqaLgU8xiS2oq7uFeLd1aYe9QBV0Lxc0htIvStFpODJMsLNcZ3FLW2L91EmlISWg+aufCWpw1CczLpy3dsf+BdI7mMq/bd6yxKsw5W0EGwgMhalDpDTpx2SBU2ORQlqssPQa6KVlOlxAilBA4P60FCe3KFrgKArSqd+AV3z5gGz2Ck3KWRJoWx7XZspyTJx5A1Z3tp1WrKXyXxCWS+fPebXXV51f7osp/bquyI1Fu27tdZQty9q2x+DCP6h6b4G8VjeVZhxVU30PbEwdT1Ymrl7vz0oA4sodz1Pv9NX+C7FpzhX9huTyAxsjTs4tFqBUNIQpJk6sNE2PrPNBJePpQnCdDTvZrn0ESs6IozJeYN8PMazExcqiHBQSx06TcPIECXwhlkKFknd9PHHx3x+kFnMVPCacoJUU9SU=
   file:
     - ./push/*
   file_glob: true
   on:
-    repo: Ghost-chu/HeadDropsSS
+    repo: Ghost-chu/$PROJECT_NAME
     tags: true
   overwrite: true
