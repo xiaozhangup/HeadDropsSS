@@ -22,6 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Main extends JavaPlugin implements Listener {
     private boolean dropSkull = false;
     private boolean scanItemFrame = false;
+
     @Override
     public void onEnable() {
         saveDefaultConfig();
@@ -29,13 +30,13 @@ public class Main extends JavaPlugin implements Listener {
         this.scanItemFrame = getConfig().getBoolean("scan-itemframe");
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getWorlds().forEach((world -> {
-            if(scanItemFrame) {
+            if (scanItemFrame) {
                 for (Entity entity : world.getEntities()) {
                     checkSkullInItemFrame(entity);
                 }
             }
-            for (Chunk chunk : world.getLoadedChunks()){
-                for (BlockState state : chunk.getTileEntities()){
+            for (Chunk chunk : world.getLoadedChunks()) {
+                for (BlockState state : chunk.getTileEntities()) {
                     checkAndRemoveSkull(state);
                 }
             }
@@ -43,15 +44,16 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     private void checkSkullInItemFrame(Entity entity) {
-        if(entity.getType() == EntityType.ITEM_FRAME){
-            ItemFrame itemFrame = (ItemFrame)entity;
-            if(itemFrame.getItem().getItemMeta() instanceof SkullMeta){
+        if (entity.getType() == EntityType.ITEM_FRAME) {
+            ItemFrame itemFrame = (ItemFrame) entity;
+            ItemStack stack = itemFrame.getItem();
+            if (stack.getType() != Material.PLAYER_HEAD || stack.getType() != Material.PLAYER_WALL_HEAD) {
                 SkullMeta skull = (SkullMeta) itemFrame.getItem().getItemMeta();
-                if(skull.getPlayerProfile() != null){
+                if (skull.getPlayerProfile() != null) {
                     PlayerProfile playerProfile = skull.getPlayerProfile();
-                    if(!playerProfile.hasTextures()){
+                    if (!playerProfile.hasTextures()) {
                         itemFrame.setItem(new ItemStack(Material.AIR));
-                        getLogger().info("Removed skull at "+itemFrame.getLocation()+" in the ItemFrame cause this skull will client laggy");
+                        getLogger().info("Removed skull at " + itemFrame.getLocation() + " in the ItemFrame cause this skull will client laggy");
                     }
                 }
             }
@@ -60,40 +62,41 @@ public class Main extends JavaPlugin implements Listener {
 
     private void checkAndRemoveSkull(BlockState state) {
         Material blockType = state.getType();
-        if(blockType == Material.PLAYER_HEAD || blockType == Material.PLAYER_WALL_HEAD){
-            Skull skull = (Skull)state;
-            if(skull.getPlayerProfile() != null){
+        if (blockType == Material.PLAYER_HEAD || blockType == Material.PLAYER_WALL_HEAD) {
+            Skull skull = (Skull) state;
+            if (skull.getPlayerProfile() != null) {
                 PlayerProfile playerProfile = skull.getPlayerProfile();
-                if(!playerProfile.hasTextures()){
+                if (!playerProfile.hasTextures()) {
                     skull.getBlock().setType(Material.AIR);
-                    getLogger().info("Removed skull at "+skull.getLocation()+" cause this skull will client laggy");
+                    getLogger().info("Removed skull at " + skull.getLocation() + " cause this skull will client laggy");
                 }
             }
         }
     }
 
-    @EventHandler(ignoreCancelled = true,priority = EventPriority.MONITOR)
-    public void playerDeath(PlayerDeathEvent e){
-        if(!dropSkull){
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void playerDeath(PlayerDeathEvent e) {
+        if (!dropSkull) {
             return;
         }
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
-        if(!e.getEntity().getPlayerProfile().hasTextures()){
-            getLogger().info("Cancel drop skull for player "+e.getEntity().getName()+" cause this player no skin");
+        if (!e.getEntity().getPlayerProfile().hasTextures()) {
+            getLogger().info("Cancel drop skull for player " + e.getEntity().getName() + " cause this player no skin");
             return;
         }
         ItemMeta meta = head.getItemMeta();
-        SkullMeta skullMeta = (SkullMeta)meta;
+        SkullMeta skullMeta = (SkullMeta) meta;
         skullMeta.setPlayerProfile(e.getEntity().getPlayerProfile());
         head.setItemMeta(skullMeta);
-        e.getEntity().getLocation().getWorld().dropItem(e.getEntity().getLocation(),head);
+        e.getEntity().getLocation().getWorld().dropItem(e.getEntity().getLocation(), head);
     }
-    @EventHandler(ignoreCancelled = true,priority = EventPriority.MONITOR)
-    public void onChunkLoad(ChunkLoadEvent event){
-        for (BlockState state : event.getChunk().getTileEntities()){
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onChunkLoad(ChunkLoadEvent event) {
+        for (BlockState state : event.getChunk().getTileEntities()) {
             checkAndRemoveSkull(state);
         }
-        if(scanItemFrame) {
+        if (scanItemFrame) {
             for (Entity entity : event.getChunk().getEntities()) {
                 checkSkullInItemFrame(entity);
             }
