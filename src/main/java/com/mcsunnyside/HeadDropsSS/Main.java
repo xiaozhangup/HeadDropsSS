@@ -21,6 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin implements Listener {
     private boolean dropSkull = false;
+    private boolean scanChunk = true;
     private boolean scanItemFrame = false;
 
     @Override
@@ -28,6 +29,7 @@ public class Main extends JavaPlugin implements Listener {
         saveDefaultConfig();
         this.dropSkull = getConfig().getBoolean("drop-skull");
         this.scanItemFrame = getConfig().getBoolean("scan-itemframe");
+        this.scanChunk = getConfig().getBoolean("scan-chunk",true);
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getWorlds().forEach((world -> {
             if (scanItemFrame) {
@@ -35,9 +37,11 @@ public class Main extends JavaPlugin implements Listener {
                     checkSkullInItemFrame(entity);
                 }
             }
-            for (Chunk chunk : world.getLoadedChunks()) {
-                for (BlockState state : chunk.getTileEntities()) {
-                    checkAndRemoveSkull(state);
+            if(scanChunk){
+                for (Chunk chunk : world.getLoadedChunks()) {
+                    for (BlockState state : chunk.getTileEntities()) {
+                        checkAndRemoveSkull(state);
+                    }
                 }
             }
         }));
@@ -93,8 +97,10 @@ public class Main extends JavaPlugin implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onChunkLoad(ChunkLoadEvent event) {
-        for (BlockState state : event.getChunk().getTileEntities()) {
-            checkAndRemoveSkull(state);
+        if(scanChunk) {
+            for (BlockState state : event.getChunk().getTileEntities()) {
+                checkAndRemoveSkull(state);
+            }
         }
         if (scanItemFrame) {
             for (Entity entity : event.getChunk().getEntities()) {
